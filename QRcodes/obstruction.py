@@ -35,11 +35,7 @@ def capture_image():
 
 
     #result
-    #return cropped
-
-    #FOR TESTING
-    return cv2.imread(r"/Users/aidanlear/PycharmProjects/VCResearch/QRcodes/qr-images/qr4x4obstructed.png", 0)
-    #FORTESTING END
+    return cropped
 
 
 def verify(n):
@@ -60,7 +56,6 @@ def verify(n):
     """
     #Capture and crop the image
     image = capture_image()
-
 
     #preprocess the image (sharpen with the parameters set in config.py)
     preprocessed_image = thresh.sharpen(image,
@@ -113,7 +108,7 @@ def parse(data: str):
     #handshake
     elif tokens[0] == "1":
         print("recieved handshake from jacob...")
-        outpipe = open(config.OUT_PIPE_PATH)
+        outpipe = open(config.OUT_PIPE_PATH, "w")
         outpipe.write('1\n')
         outpipe.close()
 
@@ -139,7 +134,7 @@ def main():
         with open(FIFO) as fifo:
             while True:
                 print('awaiting input from pipe')
-                data = fifo.read().strip()
+                data = fifo.read().strip().strip('\x00')
 
                 # i think this resets the writer as to not block
                 if len(data) == 0:
