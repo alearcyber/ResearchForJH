@@ -9,7 +9,7 @@ import cv2
 MASK = None
 
 #setup the video capture object
-video_capture = cv2.VideoCapture(1)
+video_capture = cv2.VideoCapture(0)
 
 #path where debug files are stored
 DEBUG_FOLDER = None
@@ -26,7 +26,8 @@ SIGMA = 1.0
 AMOUNT = 1.0
 
 
-
+#DISPLAY LOCATION, numpy array with the ordered coordinates
+display_coordinates = None
 
 
 

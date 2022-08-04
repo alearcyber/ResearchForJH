@@ -41,18 +41,21 @@ def perspective_transform(image, corners):
 
     # Convert to Numpy format
     ordered_corners = np.array(ordered_corners, dtype="float32")
-
     # Find perspective transform matrix
     matrix = cv2.getPerspectiveTransform(ordered_corners, dimensions)
 
     # Return the transformed image
-    return cv2.warpPerspective(image, matrix, (width, height))
+    return cv2.warpPerspective(image, matrix, (width, height)), ordered_corners
 
 
 
 def extract(image):
     """
         This function will attempt to find the border of the qr code grid
+
+        :returns: Returns both the extracted image as well as the corners of the subimage extracted from the original
+            image in a 2-tuple where the 0th index is the sub-image and the 1-index is the corners.
+            The corners ordered topleft, topright, bottomright, bottomleft
     """
     original = image.copy()
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -76,10 +79,10 @@ def extract(image):
     first_cnt = cnts[0]
     peri = cv2.arcLength(first_cnt, True)
     approx = cv2.approxPolyDP(first_cnt, 0.015 * peri, True)
-    transformed = perspective_transform(original, approx)
+    transformed, corners = perspective_transform(original, approx)
 
     #return
-    return transformed
+    return transformed, corners
 
 
 def test_extract():
@@ -88,7 +91,7 @@ def test_extract():
         Shows in a new windows what was extracted
     """
     image = cv2.imread(input("Image Path:"))
-    transformed = extract(image)
+    transformed, corners = extract(image)
     cv2.imshow('transformed', transformed)
     cv2.waitKey(0)
 
