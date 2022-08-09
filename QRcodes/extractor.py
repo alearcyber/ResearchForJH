@@ -48,14 +48,41 @@ def perspective_transform(image, corners):
     return cv2.warpPerspective(image, matrix, (width, height)), ordered_corners
 
 
+def perspective_transform_already_ordered(image, corners):
+    # Order points in clockwise order
+    top_l, top_r, bottom_r, bottom_l = corners
+
+    # Determine width of new image which is the max distance between
+    # (bottom right and bottom left) or (top right and top left) x-coordinates
+    width_A = np.sqrt(((bottom_r[0] - bottom_l[0]) ** 2) + ((bottom_r[1] - bottom_l[1]) ** 2))
+    width_B = np.sqrt(((top_r[0] - top_l[0]) ** 2) + ((top_r[1] - top_l[1]) ** 2))
+    width = max(int(width_A), int(width_B))
+
+    # Determine height of new image which is the max distance between
+    # (top right and bottom right) or (top left and bottom left) y-coordinates
+    height_A = np.sqrt(((top_r[0] - bottom_r[0]) ** 2) + ((top_r[1] - bottom_r[1]) ** 2))
+    height_B = np.sqrt(((top_l[0] - bottom_l[0]) ** 2) + ((top_l[1] - bottom_l[1]) ** 2))
+    height = max(int(height_A), int(height_B))
+
+    # Construct new points to obtain top-down view of image in
+    # top_r, top_l, bottom_l, bottom_r order
+    dimensions = np.array([[0, 0], [width - 1, 0], [width - 1, height - 1],
+                           [0, height - 1]], dtype="float32")
+
+    # Find perspective transform matrix
+    matrix = cv2.getPerspectiveTransform(corners, dimensions)
+
+    # Return the transformed image
+    return cv2.warpPerspective(image, matrix, (width, height))
+
 
 def extract(image):
     """
-        This function will attempt to find the border of the qr code grid
+    This function will attempt to find the border of the qr code grid
 
-        :returns: Returns both the extracted image as well as the corners of the subimage extracted from the original
-            image in a 2-tuple where the 0th index is the sub-image and the 1-index is the corners.
-            The corners ordered topleft, topright, bottomright, bottomleft
+    :returns: Returns both the extracted image as well as the corners of the subimage extracted from the original
+        image in a 2-tuple where the 0th index is the sub-image and the 1-index is the corners.
+        The corners ordered topleft, topright, bottomright, bottomleft
     """
     original = image.copy()
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

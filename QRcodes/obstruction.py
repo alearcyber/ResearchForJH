@@ -5,6 +5,7 @@ Driver python file
 Options for what can be passed through the pipe right now:
     verify n
     close | exit | done
+    calibrate n
 """
 #config is where all the configurations are stored
 import numpy
@@ -16,7 +17,7 @@ import thresh
 import PIL.Image
 import extractor
 import callibration
-
+import os
 
 
 
@@ -26,16 +27,19 @@ def capture_image():
         If the points are NOT set yet, just use the original image. If this is the case, print a warning message
         to indicate that they need to be found
     """
-    #read a single frame from the video stream, convert to grayscale
-    ret, frame = config.video_capture.read()
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+    #use camera OR give it a path
+    if input('ATTEMPTING TO TAKE PICTURE... USE CAMERA??(y/n)').startswith('y'):
+        # read a single frame from the video stream, convert to grayscale
+        ret, frame = config.video_capture.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    else:
+        img_path = input('Image Path:')
+        frame = cv2.imread(img_path, 0)
 
-    #save the raw capture to the debug folder for debugging
-    time = datetime.now().strftime("%H-%M-%S")
-    filename = config.DEBUG_FOLDER + 'raw-capture-at-' + time + '.png'
-    qrcode2.save_ndarray(frame, filename)
-
+    #save the image
+    config.log_image(frame, 'raw-image-capture')
+    config.log('Image taken with camera has been saved.')
 
 
     #crop the image
@@ -45,12 +49,11 @@ def capture_image():
         cropped = frame
     else:
         #crop the image based on corners specified in the config file
-        cropped = extractor.perspective_transform(frame, config.display_coordinates)
+        cropped = extractor.perspective_transform_already_ordered(frame, config.display_coordinates)
 
 
-    #save the cropped image to the debug folder
-    filename = config.DEBUG_FOLDER + 'cropped-at-' + time + '.png'
-    qrcode2.save_ndarray(cropped, filename)
+    #log the image that was cropped
+    config.log_image(cropped, 'cropped-during-verification')
 
     #result
     return cropped
@@ -100,6 +103,20 @@ def verify(n):
 
 
 
+def send_out(message):
+    """
+    Send a message on the out pipe
+    :param message: str -> The message to be sent on the outpipe
+    """
+    outpipe = open(config.OUT_PIPE_PATH, "w")
+    outpipe.write(message)
+    outpipe.close()
+
+    #log that what was sent back
+    config.log(f'Sent "{message.strip()}" to the FROM AIDAN pipe.')
+
+
+
 def parse(data: str):
     """
     Parse data read from the pipe.
@@ -132,10 +149,8 @@ def parse(data: str):
 
     #handshake
     elif tokens[0] == "1":
-        print("recieved handshake from jacob...")
-        outpipe = open(config.OUT_PIPE_PATH, "w")
-        outpipe.write('1\n')
-        outpipe.close()
+        config.log(f'Received Handshake, full string received: {data}')
+        send_out('1\n')
 
 
 
@@ -160,35 +175,48 @@ def calibrate(n):
         Minimize the parameters for sharpening.
         Corner coordinates and the sharpening parameters will be save in memory within config.py
     """
-    # TODO - Finish writing the calibrator
 
+    # ----Debug Messages----
+    config.log(f'Beginning calibration sequence with {n}x{n} Grid of qr codes...')
 
     # ----FIND CORNER COORDINATES----
-    ret, frame = config.video_capture.read()
+    #print('TYPE OF THE FRAME HERE', type(frame))
+    frame = config.capture_image('raw')
     cropped, corners = extractor.extract(frame)
 
-    #debug save the raw and the cropped
-    time = datetime.now().strftime("%H-%M-%S")
-    filename = config.DEBUG_FOLDER + 'raw-capture-for-calibration-at-' + time + '.png'
-    qrcode2.save_ndarray(frame, filename)
-    filename = config.DEBUG_FOLDER + 'cropped-during-calibration-at-' + time + '.png'
-    qrcode2.save_ndarray(cropped, filename)
+    #save the image cropped out for calibration
+    config.log_image(cropped, 'calibration-image-cropped')
+
 
     #save the corners that were found
     config.display_coordinates = corners
 
-    #status message
-    print('Successfully set the corner coordinates of the display. Coordinates found:', corners)
 
+    #status message
+    config.log('Successfully set the corner coordinates of the display. Coordinates found: ' + str(corners))
 
 
 
     # ----MINIMIZE SHARPENING PARAMETERS----
-    print('Finding best pre-processing parameters...')
-    sigma, amount = callibration.calibrate(cropped, n)
-    print(f'Done! Sigma={sigma}, amount={amount}')
-    config.SIGMA = sigma
-    config.AMOUNT = amount
+    config.log("Beginning Sharpen Parameter Minimization...")
+    parameters = callibration.brute_force_sharpen_parameters(cropped, n) # added in a brute force calibration
+    # sigma, amount = callibration.calibrate(cropped, n)   # removed the old minimization
+
+
+    # parameters being None constitutes a failure
+    if parameters is None:
+        config.log('ERROR: FAILED TO MINIMIZE PARAMETERS FOR SHARPENING')
+        send_out('0\n')
+
+    #if not none, we found a minimum
+    else:
+        #unpack tuple where parameters are stored
+        kernel, sigma, amount = parameters
+        config.log(f'Completed Minimization. Kernel={kernel} Sigma={sigma}, amount={amount}')
+        config.KERNEL = kernel
+        config.SIGMA = sigma
+        config.AMOUNT = amount
+        send_out('1\n')
 
 
 
@@ -203,6 +231,11 @@ def main():
     FIFO = config.PIPE_PATH
     terminating = False
     print("Opening Pipe...")
+    # print a debug message for locations of the pipes
+    config.log("Connecting to FROM JACOB pipe. Located at: " + os.path.abspath(FIFO))
+    config.log('FROM AIDAN pipe is located at: ' + os.path.abspath(config.OUT_PIPE_PATH))
+
+
     while True:
         with open(FIFO) as fifo:
             while True:
@@ -217,7 +250,9 @@ def main():
                 if data.startswith(('done', 'exit', 'close')):
                     terminating = True
                     print("Closing Pipe...")
-                print(f'Input from pipe:{data}')
+
+                #Log what was received on the pipe
+                config.log(f'Input from pipe received: {data}')
 
 
                 #send data to the parser

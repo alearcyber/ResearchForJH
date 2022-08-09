@@ -9,10 +9,10 @@
 mask=100,100,800,800
 
 #pipe path
-pipe=/fromJacob
+pipe=fromJacob
 
 #pipe path for writing to jacob
-pipetojacob=/fromAidan
+pipetojacob=fromAidan
 
 #debug files
 #debugpath=/home/eri/Programs/JH-OpenGL-work/

@@ -36,16 +36,7 @@ def sharpen_hill_climb():
     #result = sp.dual_annealing(process_image, bounds=[[0, 1]], maxiter=100)
 
     #INTIAL GUESS is x0
-    i = cv2.imread(r"/Users/aidanlear/PycharmProjects/VCResearch/QRcodes/sharpened-qrcodes/qr5.png", 0)
-    x0 = [0.5, 0.5]
-    N = 5
-    tolerance = 100/(N**2)
-
-    #result = sp.minimize(process_image2, method='Nelder-Mead', x0=x0, bounds=[[0.1, 2], [0.1, 2]], tol=tolerance)     # sigma, amount
-    #result = sp.dual_annealing(process_image2, bounds=[[0, 2], [0, 2]], maxiter=10, )
-    #result = sp.differential_evolution(process_image2, x0=x0, bounds=[[0.1, 2], [0.1, 2]], tol=20, maxiter=50, disp=True)
-    #result = sp.fmin(process_image2, )
-
+    i = cv2.imread(r"/Users/aidanlear/PycharmProjects/VCResearch/QRcodes/debug/cropped-during-calibration-at-12-36-22.png", 0)
 
     #input
     kernel_values = [1, 3]
@@ -282,6 +273,25 @@ def calibrate(img_in: numpy.ndarray, n_in: int, initial_guess=(0.5, 0.5)):
     return best_sigma, best_amount
 
 
+
+def brute_force_sharpen_parameters(image, n):
+    """ brute force function for finding the optimum kernel, sigma, and amount values """
+    kernel_values = [1, 3, 5, 7, 9]
+    sigma_values = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
+    amount_values = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]
+
+    #iterate over parameters
+    for kernel, sigma, amount in itertools.product(kernel_values, sigma_values, amount_values):
+        sharpened_image = thresh.sharpen(image, kernel_size=(kernel, kernel), sigma=sigma, amount=amount)
+        percent_codes_recognized = qrcode2.verify_image_percent(sharpened_image, n)
+        if percent_codes_recognized == 100:
+            return kernel, sigma, amount
+
+
+
+
+
+
 def calibrate_callback(x, f, content):
     """
     Callback function called in the dual annealing process for calibrate().
@@ -330,11 +340,9 @@ if __name__ == '__main__':
             percent_missed = process_image2([sigma, amount])
             print(f'Sigma:{sigma}, amount:{amount}, Percent Missed:{percent_missed}')
     """
+    test_image = cv2.imread(input('Image path:'), 0)
+    print(brute_force_sharpen_parameters(test_image, 5))
 
-    #basic implementation of communicating with named
-    #try callback function
-    #take grab still with opencv or whqtev3er else
-    #come back monday
 
-    test_calibrate()
+    #test_calibrate()
 
