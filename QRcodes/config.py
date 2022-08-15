@@ -127,6 +127,7 @@ def capture_image(mode='gray'):
     return frame
 
 
+print(START_TIME)
 #log for standalone mode
 if STANDALONE_MODE:
     log('Program running in Standalone Mode')
