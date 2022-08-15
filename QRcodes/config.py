@@ -12,7 +12,7 @@ import PIL.Image
 MASK = None
 
 #setup the video capture object
-video_capture = cv2.VideoCapture(0)
+video_capture = cv2.VideoCapture(2)
 
 #path where debug files are stored
 DEBUG_FOLDER = None

@@ -182,6 +182,7 @@ def calibrate(n):
     # ----FIND CORNER COORDINATES----
     #print('TYPE OF THE FRAME HERE', type(frame))
     frame = config.capture_image('raw')
+    config.log_image(frame, 'before_crop')
     cropped, corners = extractor.extract(frame)
 
     #save the image cropped out for calibration
