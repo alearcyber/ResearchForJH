@@ -4,7 +4,8 @@ Holds the functionality for finding the screen and flattening it
 
 import cv2
 import numpy as np
-
+import config
+import PIL.Image, PIL.ImageDraw
 
 
 def perspective_transform(image, corners):
@@ -49,8 +50,19 @@ def perspective_transform(image, corners):
 
 
 def perspective_transform_already_ordered(image, corners):
+
     # Order points in clockwise order
     top_l, top_r, bottom_r, bottom_l = corners
+
+    #Log an image of where things are going to be saved
+    img = PIL.Image.fromarray(image)
+    draw = PIL.ImageDraw.Draw(img)
+    radius = 5 # radius of the circles to be drawn, in pixels
+    draw.ellipse((top_l[0] - radius, top_l[1] - radius, top_l[0] + radius, top_l[1] + radius), fill='red', outline='red')
+    draw.ellipse((top_r[0] - radius, top_r[1] - radius, top_r[0] + radius, top_r[1] + radius), fill='red', outline='red')
+    draw.ellipse((bottom_r[0] - radius, bottom_r[1] - radius, bottom_r[0] + radius, bottom_r[1] + radius), fill='red', outline='red')
+    draw.ellipse((bottom_l[0] - radius, bottom_l[1] - radius, bottom_l[0] + radius, bottom_l[1] + radius), fill='red', outline='red')
+    config.log_image(img, 'fourcorners')
 
     # Determine width of new image which is the max distance between
     # (bottom right and bottom left) or (top right and top left) x-coordinates
@@ -68,7 +80,6 @@ def perspective_transform_already_ordered(image, corners):
     # top_r, top_l, bottom_l, bottom_r order
     dimensions = np.array([[0, 0], [width - 1, 0], [width - 1, height - 1],
                            [0, height - 1]], dtype="float32")
-
     # Find perspective transform matrix
     matrix = cv2.getPerspectiveTransform(corners, dimensions)
 

@@ -6,6 +6,13 @@ Options for what can be passed through the pipe right now:
     verify n
     close | exit | done
     calibrate n
+
+    find
+        finds the border
+
+    verifymask n
+        performs verifications BUT crops with a mask. Mask is passed through python
+
 """
 #config is where all the configurations are stored
 import numpy
@@ -73,7 +80,6 @@ def verify(n):
     through in the config.txt file OR they can be set by sending a calibration request through the pipe. After
     preprocessing, the qr codes will be read. A debug image visually showing what qrcodes could be read or not
     will be saved. The results will be returned. The parse() function will handle sending the results
-
     """
     #Capture and crop the image
     image = capture_image()
@@ -166,6 +172,33 @@ def parse(data: str):
         #TODO - send back some status message for calibration. Maybe write success or failure (1 or 0)?
 
 
+    elif tokens[0] == 'find':
+        config.log("Input from pipe perceived as a FIND operation. beggining to find the border...")
+        #TODO figure out the return value for find(). actually set it up and whatnot
+        result = find()
+
+
+    elif tokens[0] == 'verifymask':
+        config.log('Input from pipe perceived as VERIFYMASK. beginning operation.')
+
+        #ensure verifymask was passed correctly
+        assert len(tokens) == 2, 'ERROR, incorrect number of tokens for VERIFY MASK. Tokens received: ' + str(tokens)
+
+        # nxn grid of qr codes
+        n = int(tokens[1])
+
+        #perform the verification, result should be the bit string to send back to jacob
+        result = verify_mask(n)
+
+        #check that the result is valid
+        assert len(result) == n*n, f'ERROR: wrong length of bits was sent from verify_mask(), length received:{len(result)}, length expected:{n*n}'
+        only1and0 = True #boolean to tell if only 1's and 0's were in the bitlist
+        for bit in result:
+            only1and0 = only1and0 and (bit in result)
+        assert only1and0, f'ERROR: found an invalid character in the bit string returned from verify_mask(), got:' + result
+
+        #Send Results back to Jacob
+        send_out(result)
 
 
 
@@ -180,7 +213,6 @@ def calibrate(n):
     config.log(f'Beginning calibration sequence with {n}x{n} Grid of qr codes...')
 
     # ----FIND CORNER COORDINATES----
-    #print('TYPE OF THE FRAME HERE', type(frame))
     frame = config.capture_image('raw')
     config.log_image(frame, 'before_crop')
     cropped, corners = extractor.extract(frame)
@@ -221,7 +253,104 @@ def calibrate(n):
 
 
 
+def find():
+    """ THis function will take a picture and attempt to find the border"""
+    # capture an image
+    image = config.capture_image('raw')
 
+    # debugging information
+    config.log_image(image, 'find-precrop')
+    config.log('Successfuly captured raw image and saved in the debug location...')
+
+    # attempt with the cropping
+    config.log('Finding border...')
+    cropped_image, corners = extractor.extract(image)
+    config.log('Found border.')
+    config.log_image(cropped_image, 'find-postcrop')
+    config.log('Saved cropped image...')
+
+
+
+
+def verify_mask(n):
+    """
+    verification with a mask
+    TODO make a good comment here for this
+    """
+    #log info
+    config.log('Starting verifymask...')
+
+    #prompt the user for the mask, split by space, topleft, topright, bottomright, bottomleft order
+    corners = input('Corner coordinates for mask? '
+                    'Please format it as x1 y1 x2 y2 x3 y3 x4 y4 where 1 is topleft and rotates around clockwise:')
+
+    #Split the mask corners by the space from the input
+    corners = corners.split(' ') # split on the space
+    corners = [int(e) for e in corners]  # convert everything from strings to integers
+
+
+    #check the the number of coordinates for the corners is correct, should be 8
+    assert len(corners) == 8, 'ERROR: Incorrect number of coordinates, number of coordinates received: ' + str(len(corners))
+
+
+    # unpack corners; 1=topleft, 2=topright, 3=bottomright, 4=bottomleft
+    x1, y1, x2, y2, x3, y3, x4, y4 = tuple(corners)
+    assert x2 > x1, 'ERROR: the topleft and topright corners are potentially out of place'
+    assert x3 > x4, 'ERROR: the bottomleft and bottomright corners are potentially out of place'
+    assert y4 > y1, 'ERROR: the topleft and bottomleft corners are potentially out of place'
+    assert y3 > y2, 'ERROR: the topright and bottomright corners are potentially out of place'
+    assert x3 > x1, 'ERROR: the topleft and bottomright corners are potentially out of place'
+    assert y3 > y1, 'ERROR: the topleft and bottomright corners are potentially out of place'
+
+
+    #log what parameters were passed, let user know everything is good
+    config.log(f'Working with a {n}x{n} qr code grid...')
+    config.log(f'CORNERS: ({x1}, {y1}), ({x2}, {y2}), ({x3},{y3}), ({x4}, {y4})')
+
+    #take and save raw picture
+    image = config.capture_image('raw')
+    config.log_image(image, 'verifymask-precrop')
+    config.log('Took raw image.')
+
+
+    #homography/perspective transform based on coordinates
+    #ORDER IMPORTANT: topleft, topright, bottomright, bottomleft
+    corners = numpy.float32([[x1, y1], [x2, y2], [x3, y3], [x4, y4]])
+    cropped = extractor.perspective_transform_already_ordered(image, corners)
+    config.log_image(cropped, 'verifymask-postcrop')
+    config.log('Successfully took picture and cropped. Beginning verification...')
+
+    #find percentage for the raw then the cropped
+    raw_results = qrcode2.verify_image(cropped, n)
+    cropped = thresh.sharpen(cropped, kernel_size=(config.KERNEL, config.KERNEL),
+                                    sigma=config.SIGMA,
+                                    amount=config.AMOUNT)
+    processed_results = qrcode2.verify_image(cropped, n)
+
+
+    #Determine if the processed image or raw image was easier to read based on the results from verify...
+    if raw_results[0] > processed_results[0]:
+        config.log('Raw Image verified higher than raw results')
+        best_results = raw_results
+    else:
+        config.log('Processed image verified higher than raw.')
+        best_results = processed_results
+
+    #let the user know what was found
+    config.log(f'Completed Verification. {round(best_results[0] * 100)}% of the qrcodes were identified.')
+
+
+    # construct and return the bit string, 0 if the qrcode was obstructed, 1 if qr code was read
+    bit_string = ''
+    for i in range(n*n):
+        bit_string += '0' if i in best_results[2] else '1' # add the appropriate string to the output
+
+
+    #make a debug image for if the image verified correctly
+    config.log_verification(cropped, bit_string, n)
+
+    #return the results back to the parser
+    return bit_string
 
 
 

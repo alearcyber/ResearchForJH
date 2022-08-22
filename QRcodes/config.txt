@@ -9,14 +9,14 @@
 mask=100,100,800,800
 
 #pipe path
-pipe=/tmp/fromJacob
+pipe=fromJacob
 
 #pipe path for writing to jacob
-pipetojacob=/tmp/fromAidan
+pipetojacob=fromAidan
 
 #debug files
-debugpath=/home/eri/Programs/JH-OpenGL-work/
-#debugpath=/Users/aidanlear/PycharmProjects/VCResearch/QRcodes/debug/
+#debugpath=/home/eri/Programs/JH-OpenGL-work/
+debugpath=/Users/aidanlear/PycharmProjects/VCResearch/QRcodes/debug/
 
 
 #default values for kernel, sigma, and amount

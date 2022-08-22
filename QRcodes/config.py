@@ -4,7 +4,7 @@ read in the configurations
 import cv2
 from datetime import datetime
 import os
-import PIL.Image
+import PIL.Image, PIL.ImageDraw
 
 #----configuration variables----
 
@@ -12,7 +12,7 @@ import PIL.Image
 MASK = None
 
 #setup the video capture object
-video_capture = cv2.VideoCapture(2)
+video_capture = cv2.VideoCapture(0)
 
 #path where debug files are stored
 DEBUG_FOLDER = None
@@ -106,8 +106,62 @@ def log_image(image, name):
     """
     filename = f'{START_TIME}-{name}.png'
     filepath = os.path.join(DEBUG_FOLDER, filename)
+    try:
+        img = PIL.Image.fromarray(image)
+        img.save(filepath, 'png')
+    except:
+        image.save(filepath, 'png')
+
+
+
+def log_verification(image, bitstring, n):
+    """
+    saves an image of what was recognized
+    TODO add a good comment here
+    :param image:
+    :param bitstring:
+    :return:
+    """
+    # make a PIL image
     img = PIL.Image.fromarray(image)
-    img.save(filepath, 'png')
+
+    #grab drawing object for the PIL image
+    draw = PIL.ImageDraw.Draw(img)
+
+    #radius of the circles to be drawn, in pixels.
+    radius = 10
+
+    #iterate over the subimages
+    height, width = image.shape[0], image.shape[1] # extract width and height of the image
+    subheight = height//n
+    subwidth = width//n
+    x_crossections = []
+    y_crossections = []
+    for i in range(n):
+        x_crossections.append(subwidth * i)
+        y_crossections.append(subheight * i)
+
+    qr_code_number = 0
+    for y in y_crossections:
+        for x in x_crossections:
+
+            #square where the qr code is
+            x1, y1, x2, y2 = x, y, x + subwidth, y + subheight
+
+            #get the coordinates to draw the circle
+            _x, _y = (x1 + x2)//2, (y1 + y2)//2
+
+            #draw the circle
+            color = 'blue' if bitstring[qr_code_number] == '1' else 'red'  # figure out the color of the circle
+            draw.ellipse((_x - radius, _y - radius, _x + radius, _y + radius), fill=color, outline=color)
+
+            #iterate the qrcode number so we know which one we are on. It's basically an iterator
+            qr_code_number += 1
+
+
+    #call the original log image to save the image.
+    log_image(img, 'verify-result')
+
 
 
 def capture_image(mode='gray'):
