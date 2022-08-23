@@ -19,12 +19,12 @@ import numpy
 import config
 import qrcode2
 import cv2
-from datetime import datetime
 import thresh
-import PIL.Image
+import PIL.Image, PIL.ImageTk
 import extractor
 import callibration
 import os
+import tkinter as tk
 
 
 
@@ -280,13 +280,14 @@ def verify_mask(n):
     #log info
     config.log('Starting verifymask...')
 
-    #prompt the user for the mask, split by space, topleft, topright, bottomright, bottomleft order
-    corners = input('Corner coordinates for mask? '
-                    'Please format it as x1 y1 x2 y2 x3 y3 x4 y4 where 1 is topleft and rotates around clockwise:')
+    #take and save raw picture
+    image = config.capture_image('raw')
+    config.log_image(image, 'verifymask-precrop')
+    config.log('Took raw image.')
 
-    #Split the mask corners by the space from the input
-    corners = corners.split(' ') # split on the space
-    corners = [int(e) for e in corners]  # convert everything from strings to integers
+
+    #prompt the user for the mask
+    corners = click_for_coordinates(image)
 
 
     #check the the number of coordinates for the corners is correct, should be 8
@@ -307,16 +308,15 @@ def verify_mask(n):
     config.log(f'Working with a {n}x{n} qr code grid...')
     config.log(f'CORNERS: ({x1}, {y1}), ({x2}, {y2}), ({x3},{y3}), ({x4}, {y4})')
 
-    #take and save raw picture
-    image = config.capture_image('raw')
-    config.log_image(image, 'verifymask-precrop')
-    config.log('Took raw image.')
 
 
     #homography/perspective transform based on coordinates
     #ORDER IMPORTANT: topleft, topright, bottomright, bottomleft
     corners = numpy.float32([[x1, y1], [x2, y2], [x3, y3], [x4, y4]])
     cropped = extractor.perspective_transform_already_ordered(image, corners)
+
+    #conver cropped to grayscale
+
     config.log_image(cropped, 'verifymask-postcrop')
     config.log('Successfully took picture and cropped. Beginning verification...')
 
@@ -351,6 +351,70 @@ def verify_mask(n):
 
     #return the results back to the parser
     return bit_string
+
+
+
+
+
+
+
+def click_for_coordinates(image):
+    """
+    Opens a window with the given image in in and allows the user to click 4 times. The function then
+    returns the coordinates of the 4 points select in the form of [x1, y1, x2, y2, x3, y3, x4, y4] where
+    1=topleft, 2=topright, 3=bottomright, 4=bottomleft
+
+    """
+    config.log('Prompting User for corners, opening window for corner selection...')
+
+    root = tk.Tk()
+
+    original = image
+    try:  # converts image to pil image incase it is not
+        original = PIL.Image.fromarray(original)
+    except:
+        pass
+
+    # setting up a tkinter canvas
+    w = tk.Canvas(root, width=original.width + 100, height=original.height)
+    w.pack()
+
+    img = PIL.ImageTk.PhotoImage(original)
+    w.create_image(0, 0, image=img, anchor="nw")
+
+    # add the text
+    text = tk.Text(root, height=6)
+    text.insert(tk.END, 'Click to select the coordinates of the corners...\nTop Left:')
+    text.pack(side=tk.RIGHT)
+
+    next_corner_text = ['', 'Bottom Left: ', 'Bottom Right: ', 'Top Right: ']
+    coordinates = []
+    def printcoords(event):
+
+        try:
+            text_to_add = f'({event.x}, {event.y})\n{next_corner_text.pop()}'
+            text.insert(tk.END, text_to_add)
+            coordinates.append(int(event.x))
+            coordinates.append(int(event.y))
+        except:
+            # add done message to let the user know they are done
+            root.destroy()
+
+        try:
+            if len(coordinates) == 8:
+                text.insert(tk.END, 'Four coordinates set.. click again to close this window...')
+        except:
+            pass
+
+    w.bind("<Button 1>", printcoords)
+    root.mainloop()
+
+    #log and return
+    config.log(f'Finished selecting coordinates: '
+               f'({coordinates[0]}, {coordinates[1]}), ({coordinates[2]}, {coordinates[3]}), ({coordinates[4]}, {coordinates[5]}), ({coordinates[6]}, {coordinates[7]}) ')
+    return coordinates
+
+
 
 
 
@@ -398,7 +462,7 @@ def main():
 
 
 if __name__ == '__main__':
-    #test_image = cv2.imread(r"/Users/aidanlear/PycharmProjects/VCResearch/QRcodes/sharpened-qrcodes/qr5.png", 0)
-    #find_missing_locations(test_image, 5)
-    #capture_image()
+    #image = cv2.imread(input('image path:'))
+    #click_for_coordinates(image)
+
     main()

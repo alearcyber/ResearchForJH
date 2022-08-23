@@ -284,6 +284,7 @@ def brute_force_sharpen_parameters(image, n):
     for kernel, sigma, amount in itertools.product(kernel_values, sigma_values, amount_values):
         sharpened_image = thresh.sharpen(image, kernel_size=(kernel, kernel), sigma=sigma, amount=amount)
         percent_codes_recognized = qrcode2.verify_image_percent(sharpened_image, n)
+        print(f'kernel:{kernel}   sigma:{sigma}   amount:{amount}    percent:{percent_codes_recognized}')
         if percent_codes_recognized == 100:
             return kernel, sigma, amount
 
@@ -342,7 +343,6 @@ if __name__ == '__main__':
     """
     test_image = cv2.imread(input('Image path:'), 0)
     print(brute_force_sharpen_parameters(test_image, 5))
-
 
     #test_calibrate()
 
