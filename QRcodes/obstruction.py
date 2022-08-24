@@ -258,6 +258,7 @@ def find():
     # capture an image
     image = config.capture_image('raw')
 
+
     # debugging information
     config.log_image(image, 'find-precrop')
     config.log('Successfuly captured raw image and saved in the debug location...')
@@ -315,7 +316,8 @@ def verify_mask(n):
     corners = numpy.float32([[x1, y1], [x2, y2], [x3, y3], [x4, y4]])
     cropped = extractor.perspective_transform_already_ordered(image, corners)
 
-    #conver cropped to grayscale
+    #convert cropped to grayscale
+    cropped = cv2.cvtColor(cropped, cv2.COLOR_RGB2GRAY)
 
     config.log_image(cropped, 'verifymask-postcrop')
     config.log('Successfully took picture and cropped. Beginning verification...')
@@ -390,7 +392,7 @@ def click_for_coordinates(image):
     next_corner_text = ['', 'Bottom Left: ', 'Bottom Right: ', 'Top Right: ']
     coordinates = []
     def printcoords(event):
-
+        """
         try:
             text_to_add = f'({event.x}, {event.y})\n{next_corner_text.pop()}'
             text.insert(tk.END, text_to_add)
@@ -398,13 +400,24 @@ def click_for_coordinates(image):
             coordinates.append(int(event.y))
         except:
             # add done message to let the user know they are done
-            root.destroy()
+            root.quit()
 
         try:
             if len(coordinates) == 8:
                 text.insert(tk.END, 'Four coordinates set.. click again to close this window...')
         except:
             pass
+
+        """
+
+        coordinates.append(int(event.x))
+        coordinates.append(int(event.y))
+
+        if len(coordinates) >= 8:
+            w.quit()
+            root.destroy()
+
+
 
     w.bind("<Button 1>", printcoords)
     root.mainloop()

@@ -152,8 +152,9 @@ def log_verification(image, bitstring, n):
             _x, _y = (x1 + x2)//2, (y1 + y2)//2
 
             #draw the circle
-            color = 'blue' if bitstring[qr_code_number] == '1' else 'red'  # figure out the color of the circle
-            draw.ellipse((_x - radius, _y - radius, _x + radius, _y + radius), fill=color, outline=color)
+            color = 'blue'
+            if bitstring[qr_code_number] == '1':
+                draw.ellipse((_x - radius, _y - radius, _x + radius, _y + radius), fill=color, outline=color)
 
             #iterate the qrcode number so we know which one we are on. It's basically an iterator
             qr_code_number += 1

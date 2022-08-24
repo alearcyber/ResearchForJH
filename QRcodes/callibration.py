@@ -4,7 +4,6 @@ TODO fix header comment
 References
 dual_annealing -> https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.dual_annealing.html
 optimizeResult object -> https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.OptimizeResult.html#scipy.optimize.OptimizeResult
-
 """
 
 import cv2
@@ -316,6 +315,7 @@ def process_image(params):
     sigma, amount = params
     sharpened = thresh.sharpen(IMAGE, kernel_size=(KERNEL, KERNEL), sigma=sigma, amount=amount)
     return 100 - qrcode2.verify_image_percent(sharpened, N)
+
 
 
 def test_calibrate():
