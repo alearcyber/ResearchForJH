@@ -143,6 +143,7 @@ def time_trial_differential_evolution():
     print('results\n', result)
 
 
+
 def time_trial_dual_annealing():
     """
     time trial for finding variables with dual annealing
@@ -286,8 +287,6 @@ def brute_force_sharpen_parameters(image, n):
         print(f'kernel:{kernel}   sigma:{sigma}   amount:{amount}    percent:{percent_codes_recognized}')
         if percent_codes_recognized == 100:
             return kernel, sigma, amount
-
-
 
 
 

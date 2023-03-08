@@ -1,0 +1,434 @@
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202696.3664486.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202579.5523596.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202621.0389757.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202662.8558526.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202356.5357587.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202494.0940177.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202638.4573069.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/OriginalColors/test-1666202675.1905322.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/ModifiedColorSettings/test-1666204829.078267.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/ModifiedColorSettings/test-1666204844.9060578.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/ModifiedColorSettings/test-1666204920.8535821.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+----IMAGE: /Users/aidanlear/PycharmProjects/VCResearch/QRcodes/TestNewColorsSet/ModifiedColorSettings/test-1666204816.013426.png----
+--Raw Image--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Otsu's Threshold--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Color Curve--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Unsharp Mask--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+--Readability--
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+O O O O O
+
+
+Process finished with exit code 0

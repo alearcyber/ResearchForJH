@@ -1,0 +1,9 @@
+This file contains descriptions of all the images within this directory
+
+
+planedash.png - Screenshot of the airplane dashboard
+dash2 - A picture of planedash.png, it is not obstructed. Scaled and perspective transformed to match.
+dash3 - A picture of planedash.png, it is partially obstructed on the left side. Scaled and perspective transformed to match.
+
+
+

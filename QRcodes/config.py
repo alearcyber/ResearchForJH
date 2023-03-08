@@ -42,6 +42,8 @@ STANDALONE_MODE = True
 START_TIME = datetime.now().strftime("%H-%M-%S")
 
 
+# what is the default camera number. Set to None if there isn't one
+DEFAULT_CAM = None
 
 
 #read configuration file

@@ -4,7 +4,6 @@ Holds the functionality for finding the screen and flattening it
 
 import cv2
 import numpy as np
-import config
 import PIL.Image, PIL.ImageDraw
 
 
@@ -62,7 +61,7 @@ def perspective_transform_already_ordered(image, corners):
     draw.ellipse((top_r[0] - radius, top_r[1] - radius, top_r[0] + radius, top_r[1] + radius), fill='red', outline='red')
     draw.ellipse((bottom_r[0] - radius, bottom_r[1] - radius, bottom_r[0] + radius, bottom_r[1] + radius), fill='red', outline='red')
     draw.ellipse((bottom_l[0] - radius, bottom_l[1] - radius, bottom_l[0] + radius, bottom_l[1] + radius), fill='red', outline='red')
-    config.log_image(img, 'fourcorners')
+    #config.log_image(img, 'fourcorners')
 
     # Determine width of new image which is the max distance between
     # (bottom right and bottom left) or (top right and top left) x-coordinates
